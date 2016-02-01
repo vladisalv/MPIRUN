@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# for specifying your scheduling system use MPIRUN SYSTEM='name' or
+# write it to $(HOME)/.MPIRUNrc
+#
+# now you can use: mpirun, slurm, loadlever and cleo.
+#
+#
+
+echo hi
+
+NTASK=
+SUBMIT=
+QUEUE=
+PARTITION=
+OUTPUT=
+OUPUT_ERR=
+CANCEL=
+ARGUMENTS=
+TIME=
