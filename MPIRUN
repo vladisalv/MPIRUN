@@ -1,8 +1,12 @@
 #!/bin/bash
 #
-# for specifying your scheduling system use MPIRUN --system='name' or
+# This script is wrap for popular scheduling system for launch parallel programs
+# on cluster or supercomputer.
 #
-# now you can use: mpirun, slurm, loadlever, cleo systems and
+# For specifying your scheduling system use MPIRUN --system='name' or define
+# variable SYSTEM in your enveroment (e.g. in bash: $ export SYSTEM=slurm).
+#
+# Now you can use systems like mpirun, slurm, loadlever, cleo systems and
 # mpisubmit and mpisubmit.bg scripts.
 #
 
@@ -55,6 +59,10 @@ function parse_option {
             _STDERR="$2"
             shift # past argument
             ;;
+            -e|--extra)
+            EXTRA="$2"
+            shift #past argument
+            ;;
             -*)
             echo "You used unknow option: '$key'. Use option -h for help"
             exit
@@ -73,16 +81,16 @@ function parse_option {
 
 function set_mpirun {
     echo -n "You use mpirun: "
-    LAUNCH=
+    LAUNCH=mpirun
     QUEUE=
     CANCEL=
-    NTASKS=
+    NTASKS="${_NTASKS:+"-np $_NTASKS"}"
     PARTITION=
     TIME=
     STDIN=
     STDOUT=
     STDERR=
-    ARGUMENTS=
+    ARGUMENTS="$_ARGUMENTS ${_STDOUT:+" | tee $_STDOUT"}"
     TASKID=
     USR=
 }
@@ -115,6 +123,8 @@ function set_mpisubit {
     echo -n "You use mpisubmit: "
 }
 
+############################ BEGIN SCRIPT ######################################
+
 #check first argument is operation
 OP=$1
 shift
@@ -140,26 +150,15 @@ case "$SYSTEM" in
 esac
 
 
-#check options for differ command (c have id, s ntasks)
 #run command
-
 case "$OP" in
     launch)
-        echo $LAUNCH $NTASKS $PARTITION $TIME $STDIN $STDOUT $STDERR $TASK $ARGUMENTS
+        echo $LAUNCH $NTASKS $PARTITION $TIME $STDIN $STDOUT $STDERR $EXTRA $TASK $ARGUMENTS
     ;;
     queue )
+        echo $QUEUE $TASKID $PARTITION $USR $EXTRA
     ;;
     cancel)
+        echo $CANCEL $TASKID $PARTITION $USR $EXTRA
     ;;
-    #case "$SYSTEM" in
-    #    "mpirun"    ) set_mpirun;;
-    #    "slurm"     ) set_slurm;;
-    #    "loadlever" ) set_loadlever;;
-    #    "cleo"      ) set_cleo;;
-    #esac
-    #;;
 esac
-#if [ -z ${SYSTEM+x} ] && [ -f $HOME/.MPIRUNrc ]; then
-#    echo i have file and do not set variable
-#    . $HOME/.MPIRUNrc
-#fi
