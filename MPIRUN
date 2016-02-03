@@ -158,7 +158,7 @@ function set_slurm {
     STDOUT="${_STDOUT:+"--output=$_STDOUT"}"
     STDERR=
     ARGUMENTS=$_ARGUMENTS
-    TASKID=
+    TASKID="${_TASKID:+"$_TASKID"}"
     USR="${_USER:+"--user=$_USER"}"
 }
 

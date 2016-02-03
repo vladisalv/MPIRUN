@@ -4,6 +4,18 @@ USER_SYSTEMS="mpisubmit mpisubmitbg cleo"
 
 function set_mpisubit {
     echo -n "You use mpisubmit: "
+    LAUNCH=mpisubmit
+    QUEUE=llq
+    CANCEL=llcancel
+    NTASKS="${_NTASKS:+"--nproc=$_NTASKS"}"
+    PARTITION=
+    TIME="${_TIME:+"--wtime=$_TIME"}"
+    STDIN="${_STDIN:+"--stdin=$_STDIN"}"
+    STDOUT="${_STDOUT:+"--stdout=$_STDOUT"}"
+    STDERR="${_STDERR:+"--stderr=$_STDERR"}"
+    ARGUMENTS="${_ARGUMENTS:+"-- $_ARGUMENTS"}"
+    TASKID="${_TASKID:+"$_TASKID"}"
+    USR="${_USER:+"-u $_USER"}"
 }
 
 function set_mpisubmitbg {
