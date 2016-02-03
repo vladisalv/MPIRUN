@@ -1,6 +1,4 @@
-##!/bin/sh -e
-
-#!/bin/bash
+#!/bin/sh -e
 #
 # This script is wrap for popular scheduling system on cluster or supercomputer.
 #
