@@ -1,20 +1,165 @@
-#!/bin/sh
+#!/bin/bash
 #
-# for specifying your scheduling system use MPIRUN SYSTEM='name' or
-# write it to $(HOME)/.MPIRUNrc
+# for specifying your scheduling system use MPIRUN --system='name' or
 #
-# now you can use: mpirun, slurm, loadlever and cleo.
-#
+# now you can use: mpirun, slurm, loadlever, cleo systems and
+# mpisubmit and mpisubmit.bg scripts.
 #
 
-echo hi
+function help_message {
+    echo help menu
+}
 
-NTASK=
-SUBMIT=
-QUEUE=
-PARTITION=
-OUTPUT=
-OUPUT_ERR=
-CANCEL=
-ARGUMENTS=
-TIME=
+function parse_option {
+    while [[ $# > 0 ]]
+    do
+        key="$1"
+        case $key in
+            -h|--help)
+            help_message
+            exit
+            ;;
+            -s|--system)
+            SYSTEM="$2"
+            shift # past argument
+            ;;
+            -n|--ntasks)
+            _NTASKS="$2"
+            shift # past argument
+            ;;
+            -p|--partition)
+            _PARTITION="$2"
+            shift # past argument
+            ;;
+            -r|--task-id)
+            _TASKID="$2"
+            shift # past argument
+            ;;
+            -u|--user)
+            _USER="$2"
+            shift # past argument
+            ;;
+            -t|--time)
+            _TIME="$2"
+            shift # past argument
+            ;;
+            -i|--stdin)
+            _STDIN="$2"
+            shift # past argument
+            ;;
+            -o|--stdout)
+            _STDOUT="$2"
+            shift # past argument
+            ;;
+            --stderr)
+            _STDERR="$2"
+            shift # past argument
+            ;;
+            -*)
+            echo "You used unknow option: '$key'. Use option -h for help"
+            exit
+            ;;
+            *)
+            break
+            ;;
+        esac
+        shift # past argument or value
+    done
+    TASK=$1
+    shift
+    _ARGUMENTS=$@
+}
+
+
+function set_mpirun {
+    echo -n "You use mpirun: "
+    LAUNCH=
+    QUEUE=
+    CANCEL=
+    NTASKS=
+    PARTITION=
+    TIME=
+    STDIN=
+    STDOUT=
+    STDERR=
+    ARGUMENTS=
+    TASKID=
+    USR=
+}
+
+function set_slurm {
+    echo -n "You use slurm: "
+    LAUNCH=sbatch
+    QUEUE=squeue
+    CANCEL=scancel
+    NTASKS="${_NTASKS:+"--ntasks=$_NTASKS"}"
+    PARTITION="${_PARTITION:+"--partition=$_PARTITION"}"
+    TIME="${_TIME:+"--time=$_TIME"}"
+    STDIN=
+    STDOUT="${_STDOUT:+"--output=$_STDOUT"}"
+    STDERR=
+    ARGUMENTS=$_ARGUMENTS
+    TASKID=
+    USR="${_USER:+"--user=$_USER"}"
+}
+
+function set_loadlever {
+    echo -n "You use loadlever: "
+}
+
+function set_cleo {
+    echo -n "You use cleo: "
+}
+
+function set_mpisubit {
+    echo -n "You use mpisubmit: "
+}
+
+#check first argument is operation
+OP=$1
+shift
+case "$OP" in
+    launch|l) OP=launch;;
+    queue |q) OP=queue;;
+    cancel|c) OP=cancel;;
+    -help|-h) help_message; exit;;
+    *       ) echo "You use unknow command '$OP'"; exit;;
+esac
+
+parse_option $@
+
+#check that SYSTEM is avaliable
+case "$SYSTEM" in
+    "mpirun"      ) set_mpirun;;
+    "slurm"       ) set_slurm;;
+    "loadlever"   ) set_loadlever;;
+    "cleo"        ) set_cleo;;
+    "mpisubmit.bg"| \
+    "mpisubmit"   ) set_mpisubmit;;
+    *           ) echo "You use unknow system '$SYSTEM'"; exit;;
+esac
+
+
+#check options for differ command (c have id, s ntasks)
+#run command
+
+case "$OP" in
+    launch)
+        echo $LAUNCH $NTASKS $PARTITION $TIME $STDIN $STDOUT $STDERR $TASK $ARGUMENTS
+    ;;
+    queue )
+    ;;
+    cancel)
+    ;;
+    #case "$SYSTEM" in
+    #    "mpirun"    ) set_mpirun;;
+    #    "slurm"     ) set_slurm;;
+    #    "loadlever" ) set_loadlever;;
+    #    "cleo"      ) set_cleo;;
+    #esac
+    #;;
+esac
+#if [ -z ${SYSTEM+x} ] && [ -f $HOME/.MPIRUNrc ]; then
+#    echo i have file and do not set variable
+#    . $HOME/.MPIRUNrc
+#fi
