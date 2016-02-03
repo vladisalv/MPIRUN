@@ -1,0 +1,17 @@
+#!/bin/bash
+
+USER_SYSTEMS="mpisubmit mpisubmitbg cleo"
+
+function set_mpisubit {
+    echo -n "You use mpisubmit: "
+}
+
+function set_mpisubmitbg {
+    set_mpisubit
+    echo -n "You use mpisubmit.bg: "
+    LAUNCH=mpisubmit.bg
+}
+
+function set_cleo {
+    echo -n "You use cleo: "
+}
