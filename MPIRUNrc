@@ -2,7 +2,7 @@
 
 USER_SYSTEMS="mpisubmit mpisubmitbg cleo"
 
-function set_mpisubit {
+function set_mpisubmit {
     echo -n "You use mpisubmit: "
     LAUNCH=mpisubmit
     QUEUE=llq
