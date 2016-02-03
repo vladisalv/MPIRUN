@@ -10,6 +10,46 @@
 # mpisubmit and mpisubmit.bg scripts.
 #
 
+function main {
+
+#check first argument is operation
+OP=$1
+shift
+case "$OP" in
+    launch|l) OP=launch;;
+    queue |q) OP=queue;;
+    cancel|c) OP=cancel;;
+    -help|-h) help_message; exit;;
+    *       ) echo "You use unknow command '$OP'"; exit;;
+esac
+
+parse_option $@
+
+#check that SYSTEM is avaliable and set enviroment for this
+case "$SYSTEM" in
+    "mpirun"      ) set_mpirun;;
+    "slurm"       ) set_slurm;;
+    "loadlever"   ) set_loadlever;;
+    "cleo"        ) set_cleo;;
+    "mpisubmit.bg"| \
+    "mpisubmit"   ) set_mpisubmit;;
+    *           ) echo "You use unknow system '$SYSTEM'"; exit;;
+esac
+
+#run command
+case "$OP" in
+    launch)
+        echo $LAUNCH $NTASKS $PARTITION $TIME $STDIN $STDOUT $STDERR $EXTRA $TASK $ARGUMENTS
+    ;;
+    queue )
+        echo $QUEUE $TASKID $PARTITION $USR $EXTRA
+    ;;
+    cancel)
+        echo $CANCEL $TASKID $PARTITION $USR $EXTRA
+    ;;
+esac
+} # main function
+
 function help_message {
     echo help menu
 }
@@ -123,42 +163,4 @@ function set_mpisubit {
     echo -n "You use mpisubmit: "
 }
 
-############################ BEGIN SCRIPT ######################################
-
-#check first argument is operation
-OP=$1
-shift
-case "$OP" in
-    launch|l) OP=launch;;
-    queue |q) OP=queue;;
-    cancel|c) OP=cancel;;
-    -help|-h) help_message; exit;;
-    *       ) echo "You use unknow command '$OP'"; exit;;
-esac
-
-parse_option $@
-
-#check that SYSTEM is avaliable
-case "$SYSTEM" in
-    "mpirun"      ) set_mpirun;;
-    "slurm"       ) set_slurm;;
-    "loadlever"   ) set_loadlever;;
-    "cleo"        ) set_cleo;;
-    "mpisubmit.bg"| \
-    "mpisubmit"   ) set_mpisubmit;;
-    *           ) echo "You use unknow system '$SYSTEM'"; exit;;
-esac
-
-
-#run command
-case "$OP" in
-    launch)
-        echo $LAUNCH $NTASKS $PARTITION $TIME $STDIN $STDOUT $STDERR $EXTRA $TASK $ARGUMENTS
-    ;;
-    queue )
-        echo $QUEUE $TASKID $PARTITION $USR $EXTRA
-    ;;
-    cancel)
-        echo $CANCEL $TASKID $PARTITION $USR $EXTRA
-    ;;
-esac
+main $@
