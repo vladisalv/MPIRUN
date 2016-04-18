@@ -19,7 +19,7 @@ function set_mpisubmit {
 }
 
 function set_mpisubmitbg {
-    set_mpisubit
+    set_mpisubmit
     echo -n "You use mpisubmit.bg: "
     LAUNCH=mpisubmit.bg
 }
