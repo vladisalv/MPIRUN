@@ -26,4 +26,16 @@ function set_mpisubmitbg {
 
 function set_cleo {
     echo -n "You use cleo: "
+    LAUNCH=cleo-submit
+    QUEUE=tasks
+    CANCEL="tasks -d"
+    NTASKS="${_NTASKS:+"-np $_NTASKS"}"
+    PARTITION="${_PARTITION:+"-q $_PARTITION"}"
+    TIME="${_TIME:+"-l $_TIME"}"
+    STDIN="${_STDIN:+"-stdin $_STDIN"}"
+    STDOUT="${_STDOUT:+"-stdout $_STDOUT"}"
+    STDERR="${_STDERR:+"-stderr $_STDERR"}"
+    ARGUMENTS=$_ARGUMENTS
+    TASKID="${_TASKID:+"$_TASKID"}"
+    USR="${_USER:+"-a $_USER"}"
 }
