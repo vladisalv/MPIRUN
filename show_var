@@ -1,7 +1,0 @@
-#!/bin/bash
-
-( set -o posix ; set ) > /tmp/variables.before
-source $@
-( set -o posix ; set ) > /tmp/variables.after
-diff /tmp/variables.before /tmp/variables.after
-rm /tmp/variables.before /tmp/variables.after
